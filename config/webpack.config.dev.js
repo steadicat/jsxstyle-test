@@ -120,11 +120,6 @@ module.exports = {
         include: paths.appSrc,
       },
       {
-        test: /\.(ts|tsx)$/,
-        include: paths.appSrc,
-        loader: require.resolve('jsxstyle-loader'),
-      },
-      {
         // "oneOf" will traverse all following loaders until one will
         // match the requirements. When no loader matches it will fall
         // back to the "file" loader at the end of the loader list.
@@ -144,7 +139,10 @@ module.exports = {
           {
             test: /\.(ts|tsx)$/,
             include: paths.appSrc,
-            loader: require.resolve('ts-loader'),
+            use: [
+              require.resolve('ts-loader'),
+              require.resolve('jsxstyle-loader'),
+            ],
           },
           // "postcss" loader applies autoprefixer to our CSS.
           // "css" loader resolves paths in CSS and adds assets as dependencies.
