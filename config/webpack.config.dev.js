@@ -10,6 +10,7 @@ const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeM
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
+const JsxstyleLoaderPlugin = require('jsxstyle-loader/plugin');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -65,8 +66,7 @@ module.exports = {
     // This is the URL that app is served from. We use "/" in development.
     publicPath: publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: info =>
-      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+    devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -75,7 +75,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/253
     modules: ['node_modules', paths.appNodeModules].concat(
       // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
+      process.env.NODE_PATH.split(path.delimiter).filter(Boolean),
     ),
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
@@ -83,19 +83,8 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: [
-      '.web.ts',
-      '.ts',
-      '.web.tsx',
-      '.tsx',
-      '.web.js',
-      '.js',
-      '.json',
-      '.web.jsx',
-      '.jsx',
-    ],
+    extensions: ['.web.ts', '.ts', '.web.tsx', '.tsx', '.web.js', '.js', '.json', '.web.jsx', '.jsx'],
     alias: {
-      
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
@@ -129,6 +118,11 @@ module.exports = {
         loader: require.resolve('source-map-loader'),
         enforce: 'pre',
         include: paths.appSrc,
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        include: paths.appSrc,
+        loader: require.resolve('jsxstyle-loader'),
       },
       {
         // "oneOf" will traverse all following loaders until one will
@@ -212,6 +206,8 @@ module.exports = {
     ],
   },
   plugins: [
+    new JsxstyleLoaderPlugin(),
+
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
